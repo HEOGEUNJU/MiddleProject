@@ -1,0 +1,8 @@
+package dao;
+
+import vo.SurveyVO;
+
+public interface ISurveyDao {
+
+	public int insertSurvey(SurveyVO sv);
+}

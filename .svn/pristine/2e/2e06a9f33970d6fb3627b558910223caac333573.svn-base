@@ -1,0 +1,23 @@
+package dao;
+
+import vo.SurveyVO;
+
+public class SurveyDaoImpl extends TourMyBaitsDao implements ISurveyDao {
+
+	private static SurveyDaoImpl surveyDao;
+	
+	public static SurveyDaoImpl getSurveyDao() {
+		if(surveyDao == null) {
+			surveyDao = new SurveyDaoImpl();
+		}
+		return surveyDao;
+		
+	}
+	
+	@Override
+	public int insertSurvey(SurveyVO sv) {
+		
+		return insert("survey.insertSurvey", sv);
+	}
+
+}

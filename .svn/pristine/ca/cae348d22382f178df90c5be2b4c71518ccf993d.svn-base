@@ -1,0 +1,287 @@
+<%@page import="vo.EventVO"%>
+<%@page import="java.util.List"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%
+	List<EventVO> evList = (List<EventVO>) request.getAttribute("evList");
+	String msg = session.getAttribute("msg") == null ? "" : (String) session.getAttribute("msg");
+	session.removeAttribute("msg");
+%>
+
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<meta charset="UTF-8">
+<title>관리자용 축제페이지</title>
+<style>
+/* 썸네일게시판 기본형 s */
+
+.GlistWrap{width: 100%;}
+.Glistcount{width: 100%;margin: 0 0 30px;}
+ ul{position: relative;padding:0 0 0 23px;}
+ ul::before{content:"";width: 15px;height: 3px;background: #000;top: 50%;left: 0;}
+ ul li{line-height: 1.1;padding: 0 0.5rem 0 0;}
+ ul li:first-child{margin:0 0.5rem 0 0;border: 1px solid #ccc;border-width: 0 1px 0 0;}
+ ul li span{float:initial;color:#3575d6;}
+.GlistWrap .dftGlist > li .gtxtWrap > ul li span{color:#666;}
+
+/* 썸네일게시판 기본형 e */
+
+
+/* 목록 */
+.table_01 {margin-left: -1px; padding-top: 2px; width: calc(100% + 1px); width: -webkit-calc(100% + 1px);
+border-top: 2px solid #edd4f6; border-bottom: 1px solid gray; word-break: keep-all;}
+.table_01 th, .table_01 td {padding: 18px; border: solid #ccc; border-width: 1px 0 0 1px; vertical-align: middle;}
+.txt_c { text-align: center !important; }
+.bo_notice .board_tit a {color: #eb3941;font-weight: 600;}
+table { border-spacing: 0; border-collapse: collapse; border: 0;}
+.board_body { position: relative;}
+th {display: table-cell;}
+div {display: block;}
+.pg_wrap {text-align: center; width: 100%;}
+.pg {text-align: center;}
+.pg_wrap { margin: 30px 0;}
+.pg_page {color: #959595; font-size: 1.083em; height: 30px; line-height: 28px; padding: 0 5px; min-width: 30px; text-decoration: none; border-radius: 3px;}
+.pg_current {display: inline-block;background: #e6cdaf; border: 1px solid #80776c; color: #fff;font-weight: bold; height: 30px; line-height: 30px; padding: 0 10px;  min-width: 30px; border-radius: 3px;}
+.pg_next { text-indent: -999px; overflow: hidden; background: url(../img/btn_next.gif) no-repeat 50% 50% #eee; padding: 0; border: 1px solid #eee;}
+.pg_end { text-indent: -999px; overflow: hidden; background: url(../img/btn_end.gif) no-repeat 50% 50% #eee; padding: 0;border: 1px solid #eee;}
+.contac {line-height: 3.125rem; text-align: center; color: #000; font-size: 1.125rem; padding: 0 2.5rem; border: 1px solid #000; border-radius: 25px; transition: .3s all; display: inline-block;}
+
+/* --------------------------------------------------------------------------------- */
+
+.tbWrap{width:100%;margin: 0 0 2.5rem;}
+.tbWrap table.t2 tbody {color:#444}
+.tbWrap table{position:relative;width: 100%;border: 2px solid #000;border-width: 2px 0 0;}
+.tbWrap table::after{content:"";width: 1px;height: 100%;background: #fff;top: 0;right: 0;}
+.tbWrap table tr th,
+.tbWrap table tr td{text-align:center;font-weight:200;padding: 1.125rem 1rem;}
+.tbWrap table.t2 tr td{text-align:center;padding: 1.125rem 0.625rem;}
+.tbWrap table tr td.talft{text-align: left;}
+.tbWrap table tr th{font-weight: 500;}
+.tbWrap table thead tr th{background: #eef0f3;border:1px solid #ccc;border-width: 0 1px 1px 0;}
+.tbWrap table tbody tr th,
+.tbWrap table tbody tr td{border:1px solid #ccc;border-width: 0 1px 1px 0;}
+.tbWrap table tbody tr td strong{float: initial;}
+.tbWrap table ul{width: 100%;}
+.tbWrap table ul li{width: 100%;}
+</style>
+</head>
+<!-- --------------------------------------------------------------------------------------------------------- -->
+
+<body>
+	<div id="sub">
+		<jsp:include page="../../includes/header.jsp" />
+		<jsp:include page="../../includes/subVisual.jsp" />
+		<div id="content">
+<!-- --------------------------------------------------------------------------------------------------------- -->
+			<div class="contents">
+				<div class="wrap">
+					<div class="BlistWrap">
+
+						<input type="hidden" name="menuIdx" value="370">
+						<div class="Glistcount">
+							<ul>
+								<li>전체<span>13</span>건
+								</li>
+								<li>현재페이지 <span>1/1</span></li>
+							</ul>
+
+							<!-- 게시판 검색 -->
+							<div class="search_wrap">
+								<div class="bo_sch_wrap">
+
+									<fieldset class="bo_sch">
+										<form name="fsearch" method="get" id="searchForm"
+											action="/tour/adminEvent.do">
+											<div class="input-group" style="width: 100%;">
+												<div style="width: 40%; float: left;">
+													<input type="hidden" name="bo_table" value="notice">
+													<input type="hidden" name="sca" value=""> <input
+														type="hidden" name="sop" value="and">
+													<!--  <label for="sfl" class="sound_only"></label> -->
+													<select name="sfl" id="sfl">
+														<option value="wr_subject">제목</option>
+														<option value="wr_content">장소</option>
+														<option value="wr_subject||wr_content">제목+장소</option>
+													</select> <input type="text" name="stx" value="" required=""
+														id="stx" class="sch_input" size="25" maxlength="20"
+														placeholder=" 검색어를 입력해주세요">
+												</div>
+												<div style="width: 50%; float: left;">
+													<button type="submit" class="sch_btn btn">
+														<i class="fa fa-search" aria-hidden="true">검색&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>
+													</button>
+													<a href="/tour/adminEvent.do" class="sch_btn btn"> <i
+														class="fa fa-search" aria-hidden="true">전체보기&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>
+													</a>
+												</div>
+											</div>
+											<!-- class="input-group" -->
+										</form>
+									</fieldset>
+
+								</div>
+								<!-- class="bo_sch_wrap" -->
+							</div>
+							<!-- class="search_wrap" -->
+						</div>
+						<!-- class="Glistcount" -->
+<!-- --------------------------------------------------------------------------------------------------------- -->
+<!-- 게시판 목록(반복) -->
+						 <div class="dftboard notice">
+							<div class="tbWrap">
+								<table>
+									<colgroup>
+										<col style="width: 70px">
+										<col style="width: 200px">
+										<col style="width: 70px">
+										<col style="width: 104px">
+										<col style="width: 70px">
+									</colgroup>
+
+									<thead>
+										<tr>
+											<th scope="col">축제코드</th>
+											<th scope="col">축제명</th>
+											<th scope="col">축제장소</th>
+											<th scope="col">작성자</th>
+											<th scope="col">주최자</th>
+										</tr>
+
+										<%
+											int evSize = evList.size();
+											if (evSize > 0) {
+												for (int i = 0; i < evSize; i++) {
+										%>
+
+										<tr>
+											<td><%=evList.get(i).getEventCode()%></a></td>
+											<td><a
+												href="adminEventDetail.do?eventCode=<%=evList.get(i).getEventCode()%>"><%=evList.get(i).getEventNm()%></a></td>
+											<td><%=evList.get(i).getEventLocation()%></td>
+											<td><%=evList.get(i).getAdminId()%></td>
+											<td><%=evList.get(i).getEventHost()%></td>
+										</tr>
+
+										<%
+											}
+											} else {
+										%>
+
+										<tr>
+											<td colspan="5">조회된 게시물이 없습니다.</td>
+										</tr>
+
+										<%
+											}
+										%>
+
+									</thead>
+								</table>
+
+							</div>
+							<!-- class="tbWrap" -->
+						</div>
+						<!-- class="dftboard notice" -->
+					</div>
+					<!-- class="BlistWrap" --> 
+					<!-- --------------------------------------------------------------------------------------------------------- -->
+					<!-- 작성하기 버튼 -->
+					<div class="postBttm t2">
+						<div class="wrtng">
+							<a href="/tour/adminEventWrite.do" class="contac">게시글 작성</a>
+						</div>
+					</div>
+
+					<%
+						if (msg.equals("성공")) {
+					%>
+
+					<script>
+						alert("정상적으로 처리되었습니다.");
+					</script>
+
+					<%
+						}
+					%>
+
+					<script>
+						$(".wrtng > a").click(function() {
+							$("#mode").val("form");
+							$("#searchForm").submit();
+						});
+					</script>
+
+				</div>
+				<!-- class="wrap" -->
+			</div>
+			<!-- class="contents" -->
+			<!-- --------------------------------------------------------------------------------------------------------- -->
+<!--  페이징  -->
+					<div class="pagelist">
+						<c:set var="currentPage" value="${requestScope.cPage}" />
+						현재페이지:
+						<c:out value="${currentPage}" />
+			  
+			    		<%-- 페이지영역 --%>
+						<div id="pagelist">
+							<ul class="pager">
+								<li><a class="prev" href="#">Prev</a></li>
+							</ul>
+		
+							<ul class="pagination pae">
+								<c:forEach var="i" begin="${requestScope.sPage}"
+									end="${requestScope.ePage}">
+									<c:if test="${currentPage == i}">
+										<li class="active"><a class="paging" href="#">${i}</a></li>
+									</c:if>
+		
+									<c:if test="${currentPage != i}">
+										<li><a class="paging" href="#">${i}</a></li>
+									</c:if>
+								</c:forEach>
+							</ul>
+							
+							<ul class="pager">
+								<li><a class="next" href="#">Next</a></li>
+							</ul>
+						</div>
+					</div>
+					<!-- // 페이징   -->
+
+				<!-- --------------------------------------------------------------------------------------------------------- -->
+				<script>
+	
+	//페이지 번호 클릭이벤트
+	$(".paging").on('click',function(){
+	location.href="/tour/adminEvent.do?pageNo=" + $(this).text();});
+
+	let currentPage;
+	// 이전버튼 클릭이벤트
+	$(".prev").on('click', function(){
+		if(${currentPage} == 1){
+			currentPage = ${currentPage};
+		} else{
+			currentPage = ${currentPage} - 1;
+		} location.href="/tour/adminEvent.do?pageNo=" + currentPage;}); 
+
+	// 다음버튼 클릭이벤트
+	$(".next").on('click', function(){
+		if(${currentPage} == ${requestScope.ttPage}){
+			currentPage = ${currentPage};
+		} else{
+			currentPage = ${currentPage} + 1;
+		} location.href="/tour/adminEvent.do?pageNo=" + currentPage;}); 
+</script>
+				<!-- --------------------------------------------------------------------------------------------------------- -->
+				<jsp:include page="../../includes/footer.jsp" />
+			</div>
+			<!-- id="content" -->
+	</div> <!-- id="sub" -->
+<!-- --------------------------------------------------------------------------------------------------------- -->
+
+
+
+</body>
+</html>
